@@ -42,3 +42,7 @@ class PootleAccountAdapter(DefaultAccountAdapter):
         to `True`.
         """
         return getattr(settings, "CAN_REGISTER", True)
+
+    def add_message(self, request, level, message_template, *args, **kwargs):
+        """Silence messages altogether."""
+        pass

@@ -19,3 +19,6 @@ from pootle import checks
 class PootleConfig(AppConfig):
     name = "pootle_app"
     verbose_name = "Pootle"
+
+    def ready(self):
+        import pootle.apps.accounts.signals

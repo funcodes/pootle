@@ -27,6 +27,8 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
+from allauth.account.models import EmailAddress
+
 from pootle.core.cache import make_method_key
 from pootle.core.utils.json import jsonify
 from pootle_language.models import Language
@@ -223,6 +225,19 @@ class User(AbstractBaseUser):
 
     def __unicode__(self):
         return self.username
+
+    def save(self, *args, **kwargs):
+        # Right before saving an existing user, checks if emails changed,
+        # and if so, syncs up with allauth's own `EmailAddress` model (#3737)
+        if self.pk is not None:
+            old_email = User.objects.get(pk=self.pk).email
+            if old_email != self.email:
+                EmailAddress.objects.filter(
+                    user=self,
+                    email__iexact=old_email,
+                ).update(email=self.email)
+
+        super(User, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         """Deletes a user instance.

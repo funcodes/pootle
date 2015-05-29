@@ -46,3 +46,5 @@ Copying
 
 Pootle is released under the General Public License, version 3 or later. See
 the file LICENSE for details.
+    
+    add some meaningless characters.
